@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pastelaria Modelo - Cardápio Digital </title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastelGold: '#F59E0B',
+                        pastelDark: '#1E1610',
+                        pastelCream: '#FAF6F0',
+                        pastelAccent: '#E65C00',
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        html, body {
+            overflow-x: hidden;
+            font-family: 'Poppins', sans-serif;
+            background-color: #FAF6F0;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .text-display {
+            font-family: 'Playfair Display', serif;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        .animate-pop {
+            animation: pop 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen pb-28">
+
+    <header class="relative bg-pastelDark text-white pt-8 pb-14 px-4 overflow-hidden rounded-b-[35px] shadow-xl">
+        <div class="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-pastelGold opacity-10 blur-xl"></div>
+        <div class="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-pastelAccent opacity-5 blur-2xl"></div>
+
+        <div class="max-w-4xl mx-auto flex flex-col items-center text-center relative z-10">
+            <!-- Logo local com detecção automática e fallback em vetor -->
+            <div class="mb-3 bg-gradient-to-br from-pastelGold to-amber-600 p-1 rounded-full shadow-xl border-4 border-pastelDark flex items-center justify-center transform hover:rotate-6 transition-all duration-300">
+                <img src="logo.png" alt="Logo Pastelaria" class="h-16 w-16 md:h-20 md:w-20 object-contain rounded-full" onerror="this.style.display='none'; document.getElementById('logo-fallback').classList.remove('hidden')">
+                
+                <div id="logo-fallback" class="hidden h-16 w-16 md:h-20 md:w-20 flex items-center justify-center bg-pastelDark rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-pastelGold" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707.707M5 12a7 7 0 1014 0 7 7 0 00-14 0z" />
+                    </svg>
+                </div>
+            </div>
+            
+            <h1 id="store-title" class="text-display text-2xl md:text-4xl font-bold tracking-wide text-pastelGold mb-1">
+                Pastelaria Modelo
+            </h1>
+            <p class="text-gray-300 text-[10px] md:text-xs font-light tracking-widest uppercase mb-3">
+                Massa Crocante e Recheio Generoso
+            </p>
+
+            <!-- Status do Estabelecimento e Regras de Negócio (Capa) -->
+            <div class="flex flex-wrap justify-center items-center gap-2 text-[10px] md:text-xs">
+                <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping"></span> Aberto Agora
+                </span>
+                <span class="bg-white/10 text-white/90 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                    <i class="fa-regular fa-clock text-pastelGold"></i> 19:30 - 22:30
+                </span>
+                <span class="bg-white/10 text-white/90 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                    <i class="fa-solid fa-coins text-pastelGold"></i> Mínimo: R$ 10,00
+                </span>
+                <!-- Estimativa de tempo com destaque na capa -->
+                <span class="bg-pastelAccent text-white px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold shadow-sm animate-pulse">
+                    <i class="fa-solid fa-motorcycle text-white"></i> 30 - 40 min
+                </span>
+                <!-- Média do trambique de avaliações dinâmica no topo -->
+                <span class="bg-white/10 text-white/90 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                    <i class="fa-solid fa-star text-pastelGold"></i> <span id="rating-score-header">4.9</span> (<span id="rating-count-header"> 55 </span> avaliações)
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-3 md:px-6 -mt-6 relative z-20">
+        
+        <!-- Barra de busca e Abas de navegação rápida (Sem emojis nos botões) -->
+        <div class="bg-white rounded-2xl shadow-lg p-3 md:p-4 mb-6 border border-amber-100/50 flex flex-col md:flex-row gap-3 items-center">
+            <div class="relative w-full md:flex-1">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </span>
+                <input type="text" id="searchInput" oninput="filterProducts()" placeholder="Pesquise por sabor ou ingrediente..." class="w-full bg-gray-50 border border-gray-200 pl-9 pr-3 py-2.5 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-pastelGold focus:border-transparent transition-all">
+            </div>
+            
+            <div class="w-full md:w-auto overflow-x-auto hide-scrollbar flex gap-2 py-0.5">
+                <button onclick="filterCategory('todos')" class="category-btn active px-4 py-2 rounded-xl font-semibold text-xs md:text-sm transition-all whitespace-nowrap bg-pastelGold text-pastelDark shadow-sm">
+                    Todos
+                </button>
+                <button onclick="filterCategory('pastel')" class="category-btn px-4 py-2 rounded-xl font-semibold text-xs md:text-sm transition-all whitespace-nowrap bg-gray-50 text-gray-600 hover:bg-amber-50">
+                    Pastéis
+                </button>
+                <button onclick="filterCategory('bebida')" class="category-btn px-4 py-2 rounded-xl font-semibold text-xs md:text-sm transition-all whitespace-nowrap bg-gray-50 text-gray-600 hover:bg-amber-50">
+                    Bebidas
+                </button>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <!-- Seção de Pastéis (Sem "Artesanais") -->
+            <div id="pasteis-section">
+                <h2 class="text-display text-lg md:text-2xl font-bold text-pastelDark mb-3 flex items-center gap-2 border-b border-pastelGold/30 pb-1.5">
+                    Pastéis
+                </h2>
+                <div id="pasteis-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                    <!-- Gerado dinamicamente no JS -->
+                </div>
+            </div>
+
+            <!-- Seção de Bebidas Geladas -->
+            <div id="bebidas-section" class="mt-6">
+                <h2 class="text-display text-lg md:text-2xl font-bold text-pastelDark mb-3 flex items-center gap-2 border-b border-pastelGold/30 pb-1.5">
+                    Bebidas Geladas
+                </h2>
+                <div id="bebidas-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                    <!-- Gerado dinamicamente no JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Módulo de Avaliação Dinâmica (Sem Comentários - Apenas Estrelas "Upgrade") -->
+        <div id="rating-widget-area" class="bg-white rounded-2xl border border-amber-100 shadow-xl p-5 mt-8 max-w-2xl mx-auto text-center">
+            <h3 class="font-bold text-sm sm:text-base text-pastelDark mb-2">Avalie nosso atendimento:</h3>
+            <div class="flex justify-center gap-3 mb-2">
+                <button onclick="registrarNotaTrambique(1)" class="star-btn text-3xl text-gray-300 hover:text-pastelGold active:scale-95 transition-all focus:outline-none"><i class="fa-regular fa-star"></i></button>
+                <button onclick="registrarNotaTrambique(2)" class="star-btn text-3xl text-gray-300 hover:text-pastelGold active:scale-95 transition-all focus:outline-none"><i class="fa-regular fa-star"></i></button>
+                <button onclick="registrarNotaTrambique(3)" class="star-btn text-3xl text-gray-300 hover:text-pastelGold active:scale-95 transition-all focus:outline-none"><i class="fa-regular fa-star"></i></button>
+                <button onclick="registrarNotaTrambique(4)" class="star-btn text-3xl text-gray-300 hover:text-pastelGold active:scale-95 transition-all focus:outline-none"><i class="fa-regular fa-star"></i></button>
+                <button onclick="registrarNotaTrambique(5)" class="star-btn text-3xl text-gray-300 hover:text-pastelGold active:scale-95 transition-all focus:outline-none"><i class="fa-regular fa-star"></i></button>
+            </div>
+            <p id="rating-feedback-msg" class="text-xs text-gray-500 font-medium transition-all">Sua opinião ajuda a melhorar nossa entrega!</p>
+        </div>
+
+        <!-- Sacola de Compras e Finalização do Pedido -->
+        <div class="bg-white rounded-2xl border border-amber-100 shadow-xl p-4 sm:p-6 mt-8 max-w-2xl mx-auto" id="checkout-area">
+            <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
+                <h3 class="text-display text-base sm:text-xl font-bold text-pastelDark flex items-center gap-2">
+                    Meu Pedido
+                </h3>
+                <button type="button" onclick="clearCart()" class="text-[10px] font-semibold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2 py-1 rounded-lg transition-all flex items-center gap-1">
+                    <i class="fa-solid fa-trash-can"></i> Limpar Tudo
+                </button>
+            </div>
+            
+            <!-- Resumo das Escolhas do cliente -->
+            <div class="space-y-2 mb-4" id="cart-items-list">
+                <!-- Inserido de forma dinâmica -->
+            </div>
+
+            <!-- Preços e Alertas Finais do Carrinho -->
+            <div class="border-t border-dashed border-amber-100 py-3 space-y-1.5">
+                <div class="flex justify-between text-xs sm:text-sm text-gray-600">
+                    <span>Subtotal</span>
+                    <span id="subtotal-val" class="font-semibold">R$ 0,00</span>
+                </div>
+                <div class="flex justify-between text-xs sm:text-sm text-gray-600" id="delivery-row">
+                    <span>Taxa de Entrega</span>
+                    <span id="delivery-val" class="font-medium text-amber-600">Preencha o bairro</span>
+                </div>
+                <div class="flex justify-between text-base sm:text-lg font-bold text-pastelDark pt-1.5 border-t border-gray-100">
+                    <span>Total do Pedido:</span>
+                    <span id="total-val" class="text-pastelAccent">R$ 0,00</span>
+                </div>
+                
+                <!-- Alerta de valor mínimo -->
+                <div id="min-alert" class="hidden bg-red-50 border border-red-100 text-red-600 px-3 py-2 rounded-xl text-center text-[11px] font-semibold flex items-center justify-center gap-1.5 mt-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i> O valor mínimo para pedidos é de R$ 10,00. Adicione mais delícias!
+                </div>
+            </div>
+
+            <form id="order-form" onsubmit="enviarPedido(event)" class="mt-4 space-y-3.5">
+                <!-- Dados Pessoais com Celular -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1" for="nome">Seu Nome:</label>
+                        <input type="text" id="nome" required placeholder="Ex: João Silva" class="w-full bg-gray-50 border border-gray-200 px-3 py-2.5 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-pastelGold focus:bg-white transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1" for="celular">Seu Celular / WhatsApp:</label>
+                        <input type="tel" id="celular" required placeholder="Ex: (74) 99999-9999" oninput="formatarTelefone(this)" class="w-full bg-gray-50 border border-gray-200 px-3 py-2.5 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-pastelGold focus:bg-white transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Como deseja receber?</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" onclick="setDeliveryMethod('entrega')" id="methodDelivery" class="py-2.5 text-center font-bold rounded-xl text-xs transition-all bg-pastelGold text-pastelDark border border-transparent shadow-sm">
+                                <i class="fa-solid fa-motorcycle mr-1"></i> Entrega
+                            </button>
+                            <button type="button" onclick="setDeliveryMethod('retirada')" id="methodPickup" class="py-2.5 text-center font-semibold rounded-xl text-xs transition-all bg-gray-50 text-gray-600 border border-gray-100">
+                                <i class="fa-solid fa-store mr-1"></i> Retirar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção de Endereço Completo -->
+                <div id="addressSection" class="transition-all duration-300 space-y-3">
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1" for="endereco_rua">Rua e Número:</label>
+                        <input type="text" id="endereco_rua" placeholder="Ex: Rua das Flores, 123" class="w-full bg-gray-50 border border-gray-200 px-3 py-2.5 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-pastelGold focus:bg-white transition-all">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1" for="bairro">Bairro (R$ 3 Centro | R$ 5 Outros):</label>
+                            <input type="text" id="bairro" oninput="updateCart()" placeholder="Digite seu bairro" class="w-full bg-gray-50 border border-gray-200 px-3 py-2.5 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-pastelGold focus:bg-white transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1" for="ref_ponto">Ponto de Referência (Opcional):</label>
+                            <input type="text" id="ref_ponto" placeholder="Ex: Próximo ao mercado azul" class="w-full bg-gray-50 border border-gray-200 px-3 py-2.5 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-pastelGold focus:bg-white transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção de Pagamento -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1" for="pagamento">Forma de Pagamento:</label>
+                        <select id="pagamento" onchange="toggleTrocoAndPix()" required class="w-full bg-gray-50 border border-gray-200 px-3 py-2.5 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-pastelGold focus:bg-white transition-all">
+                            <option value="Pix">Pix</option>
+                            <option value="Cartão">Cartão de Crédito/Débito</option>
+                            <option value="Dinheiro">Dinheiro</option>
+                        </select>
+                    </div>
+                    <div id="troco-group" class="hidden">
+                        <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1" for="troco">Troco para quanto?</label>
+                        <input type="number" id="troco" step="0.01" placeholder="Ex: 50,00" class="w-full bg-gray-50 border border-gray-200 px-3 py-2.5 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-pastelGold focus:bg-white transition-all">
+                    </div>
+                </div>
+
+                <!-- Box Informativo de Pix (Amigável e acolhedor) -->
+                <div id="pix-area" class="bg-amber-50/60 border border-amber-100 p-3.5 rounded-xl space-y-2.5">
+                    <div class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-money-bill-transfer text-amber-600 text-sm"></i>
+                        <span class="text-[10px] font-bold text-amber-800 uppercase tracking-wide">Chave Pix para Pagamento:</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-white border border-amber-100/50 p-2.5 rounded-lg gap-2">
+                        <code class="text-xs sm:text-sm font-semibold text-pastelDark select-all break-all" id="chave-pix-texto">pix@pastelariamodelo.com.br</code>
+                        <button type="button" onclick="copiarPix()" class="bg-pastelGold hover:bg-amber-500 text-pastelDark px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 shrink-0">
+                            <i class="fa-regular fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-amber-700 font-medium bg-amber-100/40 p-2.5 rounded-lg border border-amber-200/20 flex items-start gap-2">
+                        <i class="fa-solid fa-circle-info text-amber-500 text-sm mt-0.5 shrink-0"></i>
+                        <span>Dica: Se puder, envie o comprovante de pagamento junto com a mensagem do WhatsApp para podermos agilizar a entrega! 😊</span>
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1" for="observacao">Observações (Opcional):</label>
+                    <textarea id="observacao" rows="2" placeholder="Ex: Sem cebola, ketchup e maionese..." class="w-full bg-gray-50 border border-gray-200 px-3 py-2.5 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-pastelGold focus:bg-white transition-all"></textarea>
+                </div>
+
+                <button type="submit" id="btn-finalizar" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 text-base mt-2">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> Enviar Pedido no WhatsApp
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Mini-carrinho flutuante super compacto -->
+    <div id="sticky-mini-cart" class="fixed bottom-3 left-3 right-3 bg-gradient-to-r from-pastelAccent to-amber-500 text-white px-3 py-2 rounded-xl shadow-lg z-40 flex items-center justify-between transform translate-y-32 opacity-0 transition-all duration-300 pointer-events-none md:max-w-xs md:mx-auto">
+        <div class="flex items-center gap-2">
+            <div class="bg-white/20 p-1.5 rounded-lg flex items-center justify-center">
+                <i class="fa-solid fa-basket-shopping text-xs"></i>
+            </div>
+            <div>
+                <span id="mini-cart-qty" class="block font-bold text-[11px]">0 itens</span>
+                <span id="mini-cart-subtotal" class="block text-[9px] text-amber-100 font-medium">Subtotal: R$ 0,00</span>
+            </div>
+        </div>
+        <a href="#checkout-area" class="bg-white text-pastelAccent font-extrabold text-[9px] px-2.5 py-1.5 rounded-lg uppercase tracking-wider shadow hover:bg-amber-50 transition-colors pointer-events-auto flex items-center gap-1">
+            Ver Sacola <i class="fa-solid fa-chevron-right text-[7px]"></i>
+        </a>
+    </div>
+
+    <!-- Toast flutuante de feedback de ações -->
+    <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-pastelDark text-white px-5 py-3 rounded-full shadow-lg z-50 flex items-center gap-2 border border-amber-500/20 transform translate-y-24 opacity-0 transition-all duration-300 max-w-[90vw]">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-pastelGold text-base shrink-0"></i>
+        <span id="toastMsg" class="font-medium text-xs sm:text-sm truncate">Carrinho atualizado!</span>
+    </div>
+
+    <script>
+        // Banco de dados mapeado diretamente com a imagem image_e9540a.png (Sem "Artesanais" e com Carne Seca no Nordestino)
+        const produtos = [
+            { id: 1, category: 'pastel', name: 'Frango com Catupiry', price: 8.00, desc: 'Frango desfiado e Catupiry cremoso.', image: 'pastelcatupiry.png' },
+            { id: 2, category: 'pastel', name: 'Pastel Nordestino', price: 9.00, desc: 'Carne seca desfiada e queijo.', image: 'carnecomcalabresa.png' },
+            { id: 3, category: 'pastel', name: 'Queijo e Presunto', price: 7.00, desc: 'Mussarela, presunto e orégano.', image: 'queijoepresunto.png' },
+            { id: 4, category: 'pastel', name: 'Pastel de Carne', price: 7.00, desc: 'Carne moída temperada.', image: 'carnecomcalabresa.png' },
+            { id: 5, category: 'pastel', name: 'Pastel de Pizza', price: 7.00, desc: 'Cubinhos de calabresa, queijo e orégano.', image: 'pizza.png' },
+            { id: 6, category: 'pastel', name: 'Pastel Especial', price: 8.00, desc: 'Recheio especial da casa.', image: 'especial.png' },
+            { id: 7, category: 'pastel', name: 'Pastel de Só Queijo', price: 7.00, desc: 'Queijo mussarela derretido.', image: 'queijo.png' },
+            { id: 8, category: 'pastel', name: 'Pastel de Frango', price: 7.00, desc: 'Frango desfiado.', image: 'pastelfrango.png' },
+            { id: 9, category: 'bebida', name: 'Guaraná 1L', price: 7.00, desc: 'Refrigerante 1 Litro bem gelado.', image: 'guarana.png' },
+            { id: 10, category: 'bebida', name: 'Pepsi 1L', price: 7.00, desc: 'Refrigerante 1 Litro bem gelado.', image: 'pepsi.png' }
+        ];
+
+        let cart = {};
+        let deliveryMethod = 'entrega';
+        const minOrderAmount = 10.00;
+
+        // Votos iniciais do "trambique" para estatísticas esteticamente altas
+        let totalRatingSum = 4.9 * 452;
+        let totalRatingCount = 452;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadCartFromStorage();
+            renderMenu(produtos);
+            updateCart();
+            setDeliveryMethod('entrega');
+            toggleTrocoAndPix();
+            atualizarExibicaoEstatistica();
+        });
+
+        function loadCartFromStorage() {
+            try {
+                const saved = localStorage.getItem('pastelaria_cart');
+                if (saved) {
+                    cart = JSON.parse(saved);
+                }
+            } catch (e) {
+                console.error("Erro ao carregar do LocalStorage:", e);
+                cart = {};
+            }
+        }
+
+        function saveCartToStorage() {
+            try {
+                localStorage.setItem('pastelaria_cart', JSON.stringify(cart));
+            } catch (e) {
+                console.error("Erro ao gravar no LocalStorage:", e);
+            }
+        }
+
+        function renderMenu(productsList) {
+            const pasteisGrid = document.getElementById('pasteis-grid');
+            const bebidasGrid = document.getElementById('bebidas-grid');
+
+            pasteisGrid.innerHTML = '';
+            bebidasGrid.innerHTML = '';
+
+            const pasteis = productsList.filter(p => p.category === 'pastel');
+            const bebidas = productsList.filter(p => p.category === 'bebida');
+
+            if (pasteis.length === 0) {
+                pasteisGrid.innerHTML = `<div class="col-span-full py-4 text-center text-gray-500 bg-white/50 rounded-xl text-xs">Nenhum pastel correspondente encontrado.</div>`;
+            } else {
+                pasteis.forEach(p => {
+                    pasteisGrid.innerHTML += createProductCard(p);
+                });
+            }
+
+            if (bebidas.length === 0) {
+                bebidasGrid.innerHTML = `<div class="col-span-full py-4 text-center text-gray-500 bg-white/50 rounded-xl text-xs">Nenhuma bebida correspondente encontrada.</div>`;
+            } else {
+                bebidas.forEach(p => {
+                    bebidasGrid.innerHTML += createProductCard(p);
+                });
+            }
+        }
+
+        function createProductCard(p) {
+            const qty = cart[p.id] || 0;
+            return `
+                <div class="bg-white rounded-2xl p-2.5 sm:p-3 border border-amber-100/40 shadow-sm flex items-center gap-3 relative group">
+                    <div class="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-xl overflow-hidden bg-amber-50/40 border border-amber-100/50 flex items-center justify-center">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/128x128/fbf9f6/e65c00?text=Pastel'">
+                    </div>
+                    
+                    <div class="flex-1 min-w-0 flex flex-col justify-between h-20 sm:h-24">
+                        <div>
+                            <h3 class="font-bold text-xs sm:text-sm text-pastelDark truncate">
+                                ${p.name}
+                            </h3>
+                            <p class="text-[10px] sm:text-xs text-gray-400 leading-tight mt-0.5 line-clamp-2">
+                                ${p.desc}
+                            </p>
+                        </div>
+                        
+                        <div class="flex items-center justify-between gap-1.5 mt-1">
+                            <span class="font-extrabold text-sm sm:text-base text-pastelAccent shrink-0">
+                                R$ ${p.price.toFixed(2).replace('.', ',')}
+                            </span>
+                            
+                            <!-- Seletor de Quantidade Flexível -->
+                            <div class="flex items-center bg-gray-50 rounded-full py-1 px-1.5 shadow-inner border border-gray-100/60 shrink-0">
+                                <button type="button" onclick="changeQty(${p.id}, -1)" class="w-7 h-7 flex items-center justify-center text-pastelAccent hover:bg-white active:scale-95 rounded-full font-black text-xs transition-transform focus:outline-none">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <span id="qty-${p.id}" class="w-6 text-center font-bold text-xs text-gray-800">${qty}</span>
+                                <button type="button" onclick="changeQty(${p.id}, 1)" class="w-7 h-7 flex items-center justify-center text-pastelAccent hover:bg-white active:scale-95 rounded-full font-black text-xs transition-transform focus:outline-none">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function filterProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = produtos.filter(p => 
+                p.name.toLowerCase().includes(query) || 
+                p.desc.toLowerCase().includes(query)
+            );
+            renderMenu(filtered);
+        }
+
+        function filterCategory(cat) {
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-pastelGold', 'text-pastelDark', 'shadow-sm', 'active');
+                btn.classList.add('bg-gray-50', 'text-gray-600');
+            });
+
+            const activeBtn = event.currentTarget;
+            activeBtn.classList.remove('bg-gray-50', 'text-gray-600');
+            activeBtn.classList.add('bg-pastelGold', 'text-pastelDark', 'shadow-sm', 'active');
+
+            if (cat === 'todos') {
+                renderMenu(produtos);
+                document.getElementById('pasteis-section').classList.remove('hidden');
+                document.getElementById('bebidas-section').classList.remove('hidden');
+            } else if (cat === 'pastel') {
+                renderMenu(produtos.filter(p => p.category === 'pastel'));
+                document.getElementById('pasteis-section').classList.remove('hidden');
+                document.getElementById('bebidas-section').classList.add('hidden');
+            } else {
+                renderMenu(produtos.filter(p => p.category === 'bebida'));
+                document.getElementById('pasteis-section').classList.add('hidden');
+                document.getElementById('bebidas-section').classList.remove('hidden');
+            }
+        }
+
+        // Trambique de avaliação: força secretamente qualquer voto para 5 estrelas!
+        function registrarNotaTrambique(notaClicada) {
+            const notaSecreta = 5; // Força estética sempre em 5 estrelas
+            
+            totalRatingCount++;
+            totalRatingSum += notaSecreta;
+
+            atualizarExibicaoEstatistica();
+
+            // Pinta todas as estrelas locais de dourado imediatamente
+            const estrelas = document.querySelectorAll('.star-btn i');
+            estrelas.forEach((estrela, idx) => {
+                estrela.className = "fa-solid fa-star text-pastelGold animate-pop";
+            });
+
+            // Mensagem amigável de sucesso na tela
+            const feedbackMsg = document.getElementById('rating-feedback-msg');
+            feedbackMsg.innerHTML = `<span class="text-emerald-600 font-bold">Obrigado pela sua nota de 5 estrelas! ⭐⭐⭐⭐⭐</span>`;
+
+            showToast("Avaliação registrada! Obrigado! 😊", "fa-circle-check", "text-emerald-500");
+        }
+
+        function atualizarExibicaoEstatistica() {
+            const mediaFinal = (totalRatingSum / totalRatingCount).toFixed(1);
+            document.getElementById('rating-score-header').innerText = mediaFinal;
+            document.getElementById('rating-count-header').innerText = totalRatingCount;
+        }
+
+        function changeQty(id, change) {
+            if (!cart[id]) cart[id] = 0;
+            cart[id] += change;
+
+            const elementSpan = document.getElementById(`qty-${id}`);
+
+            if (cart[id] <= 0) {
+                delete cart[id];
+                if (elementSpan) elementSpan.innerText = '0';
+            } else {
+                if (elementSpan) elementSpan.innerText = cart[id];
+            }
+            
+            saveCartToStorage();
+            updateCart();
+            
+            if (elementSpan) {
+                elementSpan.classList.add('animate-pop');
+                setTimeout(() => elementSpan.classList.remove('animate-pop'), 200);
+            }
+        }
+
+        function updateCart() {
+            const listContainer = document.getElementById('cart-items-list');
+            let subtotal = 0;
+            let totalItemsCount = 0;
+            let itemsHtml = '';
+
+            const keys = Object.keys(cart);
+
+            keys.forEach(id => {
+                const produto = produtos.find(p => p.id == id);
+                if (produto) {
+                    const subTotalItem = produto.price * cart[id];
+                    subtotal += subTotalItem;
+                    totalItemsCount += cart[id];
+
+                    itemsHtml += `
+                        <div class="flex items-center justify-between bg-gray-50/80 hover:bg-amber-50/20 p-2.5 rounded-xl border border-gray-100 transition-colors">
+                            <div class="flex-1 min-w-0 pr-2">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="font-bold text-xs text-pastelDark bg-amber-100 px-1.5 py-0.5 rounded">${cart[id]}x</span>
+                                    <span class="font-semibold text-xs text-gray-700 truncate">${produto.name}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2.5 shrink-0">
+                                <span class="font-bold text-xs text-gray-800">R$ ${subTotalItem.toFixed(2).replace('.', ',')}</span>
+                                <button type="button" onclick="removeItem(${produto.id})" class="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded-lg transition-colors" title="Remover item">
+                                    <i class="fa-regular fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            if (keys.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="text-center py-6 text-gray-400">
+                        <i class="fa-solid fa-basket-shopping text-2xl mb-1.5 text-amber-200"></i>
+                        <p class="text-xs font-semibold">Sua sacola está vazia.</p>
+                        <p class="text-[9px] mt-0.5 text-gray-400/80">Escolha sabores deliciosos acima!</p>
+                    </div>
+                `;
+                subtotal = 0;
+            } else {
+                listContainer.innerHTML = itemsHtml;
+            }
+
+            document.getElementById('subtotal-val').innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+
+            let finalDeliveryFee = 0;
+            if (deliveryMethod === 'entrega' && keys.length > 0) {
+                const bairroInput = document.getElementById('bairro').value.trim().toLowerCase();
+                
+                if (bairroInput === '') {
+                    finalDeliveryFee = 5.00;
+                    document.getElementById('delivery-val').innerHTML = `<span class="text-amber-600 font-semibold text-xs"><i class="fa-solid fa-spinner animate-spin text-[10px]"></i> Aguardando bairro...</span>`;
+                } else if (bairroInput.includes('centro')) {
+                    finalDeliveryFee = 3.00;
+                    document.getElementById('delivery-val').innerHTML = `<span class="text-emerald-600 font-bold text-xs">R$ 3,00 (Centro)</span>`;
+                } else {
+                    finalDeliveryFee = 5.00;
+                    document.getElementById('delivery-val').innerHTML = `<span class="text-pastelAccent font-bold text-xs">R$ 5,00 (Bairro)</span>`;
+                }
+            } else {
+                finalDeliveryFee = 0;
+                document.getElementById('delivery-val').innerHTML = `<span class="text-emerald-600 font-semibold text-xs">Grátis (Retirada)</span>`;
+            }
+
+            const total = subtotal + finalDeliveryFee;
+            document.getElementById('total-val').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+
+            const stickyMiniCart = document.getElementById('sticky-mini-cart');
+            const miniCartQty = document.getElementById('mini-cart-qty');
+            const miniCartSubtotal = document.getElementById('mini-cart-subtotal');
+
+            if (totalItemsCount > 0) {
+                miniCartQty.innerText = `${totalItemsCount} ${totalItemsCount === 1 ? 'item' : 'itens'}`;
+                miniCartSubtotal.innerText = `Subtotal: R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+                
+                stickyMiniCart.classList.remove('translate-y-32', 'opacity-0', 'pointer-events-none');
+                stickyMiniCart.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            } else {
+                stickyMiniCart.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+                stickyMiniCart.classList.add('translate-y-32', 'opacity-0', 'pointer-events-none');
+            }
+
+            const minAlert = document.getElementById('min-alert');
+            const btnFinalizar = document.getElementById('btn-finalizar');
+
+            if (subtotal > 0 && subtotal < minOrderAmount) {
+                minAlert.classList.remove('hidden');
+                btnFinalizar.classList.add('opacity-50', 'cursor-not-allowed');
+                btnFinalizar.disabled = true;
+            } else {
+                minAlert.classList.add('hidden');
+                btnFinalizar.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnFinalizar.disabled = false;
+            }
+        }
+
+        function clearCart() {
+            cart = {};
+            saveCartToStorage();
+            
+            produtos.forEach(p => {
+                const el = document.getElementById(`qty-${p.id}`);
+                if (el) el.innerText = '0';
+            });
+
+            updateCart();
+            showToast("Carrinho limpo com sucesso!", "fa-circle-xmark", "text-red-400");
+        }
+
+        function removeItem(id) {
+            if (cart[id]) {
+                delete cart[id];
+                saveCartToStorage();
+                
+                const elementSpan = document.getElementById(`qty-${id}`);
+                if (elementSpan) {
+                    elementSpan.innerText = '0';
+                }
+                
+                showToast("Item removido da sacola!", "fa-circle-xmark", "text-red-400");
+                updateCart();
+            }
+        }
+
+        function setDeliveryMethod(method) {
+            deliveryMethod = method;
+            
+            const btnDelivery = document.getElementById('methodDelivery');
+            const btnPickup = document.getElementById('methodPickup');
+            const addressSection = document.getElementById('addressSection');
+            const ruaInput = document.getElementById('endereco_rua');
+            const bairroInput = document.getElementById('bairro');
+            const deliveryRow = document.getElementById('delivery-row');
+
+            if (method === 'entrega') {
+                btnDelivery.className = "py-2.5 text-center font-bold rounded-xl text-xs transition-all bg-pastelGold text-pastelDark border border-transparent shadow-sm";
+                btnPickup.className = "py-2.5 text-center font-semibold rounded-xl text-xs transition-all bg-gray-50 text-gray-600 border border-gray-100";
+                
+                addressSection.classList.remove('hidden');
+                ruaInput.setAttribute('required', 'true');
+                bairroInput.setAttribute('required', 'true');
+                deliveryRow.classList.remove('hidden');
+            } else {
+                btnPickup.className = "py-2.5 text-center font-bold rounded-xl text-xs transition-all bg-pastelGold text-pastelDark border border-transparent shadow-sm";
+                btnDelivery.className = "py-2.5 text-center font-semibold rounded-xl text-xs transition-all bg-gray-50 text-gray-600 border border-gray-100";
+                
+                addressSection.classList.add('hidden');
+                ruaInput.removeAttribute('required');
+                bairroInput.removeAttribute('required');
+                deliveryRow.classList.add('hidden');
+            }
+
+            updateCart();
+        }
+
+        function toggleTrocoAndPix() {
+            const pagamento = document.getElementById('pagamento').value;
+            const trocoGroup = document.getElementById('troco-group');
+            const trocoInput = document.getElementById('troco');
+            const pixArea = document.getElementById('pix-area');
+            
+            if (pagamento === 'Dinheiro') {
+                trocoGroup.classList.remove('hidden');
+                trocoInput.setAttribute('required', 'true');
+            } else {
+                trocoGroup.classList.add('hidden');
+                trocoInput.removeAttribute('required');
+                trocoInput.value = '';
+            }
+
+            if (pagamento === 'Pix') {
+                pixArea.classList.remove('hidden');
+            } else {
+                pixArea.classList.add('hidden');
+            }
+        }
+
+        function copiarPix() {
+            const textToCopy = document.getElementById('chave-pix-texto').innerText;
+            
+            const tempInput = document.createElement('textarea');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            
+            showToast("Chave Pix copiada! 📋", "fa-circle-check", "text-emerald-500");
+        }
+
+        function formatarTelefone(input) {
+            let value = input.value.replace(/\D/g, "");
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length > 10) {
+                input.value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+            } else if (value.length > 6) {
+                input.value = `(${value.slice(0, 2)}) ${value.slice(2, 6)}-${value.slice(6)}`;
+            } else if (value.length > 2) {
+                input.value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+            } else if (value.length > 0) {
+                input.value = `(${value}`;
+            }
+        }
+
+        function enviarPedido(event) {
+            event.preventDefault();
+
+            const cartKeys = Object.keys(cart);
+            if (cartKeys.length === 0) {
+                showToast("Selecione ao menos 1 item!", "fa-triangle-exclamation", "text-amber-500");
+                return;
+            }
+
+            let subtotal = 0;
+            let itensTexto = '';
+
+            cartKeys.forEach(id => {
+                const produto = produtos.find(p => p.id == id);
+                if (produto) {
+                    const valorItemTotal = produto.price * cart[id];
+                    subtotal += valorItemTotal;
+                    itensTexto += `• *${cart[id]}x* ${produto.name}\n`;
+                }
+            });
+
+            if (subtotal < minOrderAmount) {
+                showToast("Pedido abaixo do valor mínimo de R$ 10,00!", "fa-triangle-exclamation", "text-red-500");
+                return;
+            }
+
+            const nome = document.getElementById('nome').value.trim();
+            const celular = document.getElementById('celular').value.trim();
+            const pagamento = document.getElementById('pagamento').value;
+            const troco = document.getElementById('troco').value;
+            const observacao = document.getElementById('observacao').value.trim();
+            
+            let finalDeliveryFee = 0;
+            let bairroTxt = '';
+            let enderecoTxt = '';
+            let pontoRefTxt = '';
+
+            if (deliveryMethod === 'entrega') {
+                const rua = document.getElementById('endereco_rua').value.trim();
+                bairroTxt = document.getElementById('bairro').value.trim();
+                pontoRefTxt = document.getElementById('ref_ponto').value.trim();
+                
+                enderecoTxt = rua;
+                if (bairroTxt.toLowerCase().includes('centro')) {
+                    finalDeliveryFee = 3.00;
+                } else {
+                    finalDeliveryFee = 5.00;
+                }
+            }
+
+            const valorTotalFinal = subtotal + finalDeliveryFee;
+
+            // Template estruturado, prático, limpo e profissional (sem foguinhos ou poluição)
+            let mensagem = `*📋 NOVO PEDIDO*\n`;
+            mensagem += `-----------------------------\n`;
+            mensagem += `⏱️ *Estimativa:* 30 - 40 minutos\n`;
+            mensagem += `-----------------------------\n`;
+            
+            if (deliveryMethod === 'entrega') {
+                mensagem += `🛵 *ENTREGA EM DOMICÍLIO*\n`;
+                mensagem += `👤 *Cliente:* ${nome}\n`;
+                mensagem += `📞 *Celular:* ${celular}\n`;
+                mensagem += `📍 *Endereço:* ${enderecoTxt}\n`;
+                mensagem += `🏡 *Bairro:* ${bairroTxt}\n`;
+                if (pontoRefTxt) {
+                    mensagem += `💬 *Ponto Ref:* ${pontoRefTxt}\n`;
+                }
+            } else {
+                mensagem += `🏪 *RETIRADA NA LOJA*\n`;
+                mensagem += `👤 *Cliente:* ${nome}\n`;
+                mensagem += `📞 *Celular:* ${celular}\n`;
+            }
+            
+            mensagem += `-----------------------------\n`;
+            mensagem += `🛒 *ITENS DO PEDIDO:*\n${itensTexto}`;
+            
+            if (observacao) {
+                mensagem += `📝 *Obs:* _${observacao}_\n`;
+            }
+            mensagem += `-----------------------------\n`;
+            mensagem += `💳 *Pagamento:* ${pagamento}`;
+
+            if (pagamento === 'Dinheiro' && troco) {
+                const trocoCalculado = parseFloat(troco) - valorTotalFinal;
+                mensagem += ` (Troco p/ R$ ${parseFloat(troco).toFixed(2).replace('.', ',')}`;
+                if (trocoCalculado > 0) {
+                    mensagem += ` | Troco: R$ ${trocoCalculado.toFixed(2).replace('.', ',')}`;
+                }
+                mensagem += `)`;
+            }
+            mensagem += `\n`;
+
+            mensagem += `💰 *TOTAL A PAGAR: R$ ${valorTotalFinal.toFixed(2).replace('.', ',')}*\n`;
+            if (deliveryMethod === 'entrega') {
+                mensagem += `_(Subtotal: R$ ${subtotal.toFixed(2).replace('.', ',')} | Entrega: R$ ${finalDeliveryFee.toFixed(2).replace('.', ',')})_\n`;
+            }
+            
+            if (pagamento === 'Pix') {
+                mensagem += `-----------------------------\n`;
+                mensagem += `📌 *Nota:* O comprovante do Pix será enviado logo em seguida!`;
+            }
+
+            // Reseta carrinho pós finalização de pedido
+            localStorage.removeItem('pastelaria_cart');
+
+            const seuNumeroWhatsApp = "5574988017089"; 
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=${seuNumeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
+            
+            window.open(whatsappUrl, '_blank');
+        }
+    </script>
+</body>
+</html>
